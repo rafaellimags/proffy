@@ -39,7 +39,13 @@ const express = require('express')
 const server = express()
 const nunjucks = require('nunjucks')
 
+function getSubject(subjectIndex) {
+    const subject = subjects[subjectIndex - 1]
+    return subject
+}
+
 function pageLanding(req, res) {
+    console.log('landing')
     return res.render('index.html')
 }
 
@@ -49,21 +55,25 @@ function pageStudy(req, res) {
 }
 
 function pageGiveClasses(req, res) {
-    const filter = req.query
-    const data = filter
-    console.log(data)
-    return res.render('give-classes.html', { filter, subjects, weekdays })
+    const data = req.query
+    const isNotEmpty = Object.keys(data).length
+
+    if (isNotEmpty) {
+        data.subject = getSubject(data.subject) // pega o objeto da requisição e procura por subject    
+        proffys.push(data)
+        return res.redirect('/study') // vai para a página de estudar quando finaliza o cadastro
+    }
+
+    return res.render('give-classes.html', { subjects, weekdays })
 }
 
 nunjucks.configure('src/views', {
-    express: server, // informa qual servidor express estamos usando
+    express: server,
     noCache: true
 })
 
 server
-    // configurar arquivos estáticos (css, scripts, imagens)
     .use(express.static('public'))
-    // rotas da aplicação
     .get('/', pageLanding)
     .get('/study', pageStudy)
     .get('/give-classes', pageGiveClasses)
