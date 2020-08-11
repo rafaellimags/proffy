@@ -1,4 +1,4 @@
-<img src="./public/images/landing.svg">
+<div align="center"><img src="./public/images/landing.svg"></div>
 
 ## Sobre
 
